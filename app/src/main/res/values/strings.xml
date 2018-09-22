@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">technicaltest</string>
+
+    <!-- region Errors -->
+
+    <string name="error_too_many_result">Veuillez affiner votre recherche</string>
+    <string name="error_no_result">Aucun résultat pour cette recherche</string>
+    <string name="error_unknow">Une erreur est survenue</string>
+
+    <!-- endregion -->
+
 </resources>

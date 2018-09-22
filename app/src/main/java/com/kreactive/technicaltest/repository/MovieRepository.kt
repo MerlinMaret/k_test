@@ -1,23 +1,39 @@
 package com.kreactive.technicaltest.repository
 
 import com.jakewharton.rxrelay2.BehaviorRelay
+import com.kreactive.technicaltest.api.OMDbService
+import com.kreactive.technicaltest.api.NetworkStatus
 import com.kreactive.technicaltest.model.Movie
-import com.kreactive.technicaltest.model.Type
+import rx.Observable
+import rx.schedulers.Schedulers
+import rx.android.schedulers.AndroidSchedulers
 
-class MovieRepository(){
+class MovieRepository(private val service : OMDbService){
 
-    val movies : BehaviorRelay<List<Movie>>
+    val movies : BehaviorRelay<List<Movie>> = BehaviorRelay.createDefault(emptyList())
 
-    init {
+    fun search(search : String): Observable<NetworkStatus> {
 
-        //TODO remove this test
+        val obs = service.search(search)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext {
+                    if(it.searchResult != null){
+                        movies.accept(it.searchResult)
+                    }
+                }
+                .map<NetworkStatus> {
+                    if(it.getError() == null){
+                        NetworkStatus.Success
+                    }
+                    else {
+                        it.getError()?.let { error -> NetworkStatus.Error(error)  }
+                    }
+                }
+                .onErrorReturn { NetworkStatus.Error(it) }
+                .startWith(NetworkStatus.InProgress)
+                .share()
 
-        val list = ArrayList<Movie>()
-        for (i in 0 .. 10){
-            list.add(
-                    Movie("Batman", "2016", "tt4853102".plus(i), Type.movie, "https://m.media-amazon.com/images/M/MV5BMTdjZTliODYtNWExMi00NjQ1LWIzN2MtN2Q5NTg5NTk3NzliL2ltYWdlXkEyXkFqcGdeQXVyNTAyODkwOQ@@._V1_SX300.jpg")
-            )
-        }
-        movies = BehaviorRelay.createDefault(list)
+        return obs
     }
 }

@@ -13,6 +13,9 @@ import com.kreactive.technicaltest.viewmodel.ListFragmentViewModel
 import kotlinx.android.synthetic.main.fragment_list.*
 import org.kodein.di.generic.instance
 import android.view.MenuInflater
+import android.view.View.GONE
+import android.view.View.VISIBLE
+import com.kreactive.technicaltest.api.NetworkStatus
 
 
 class ListFragment : BaseFragment() {
@@ -51,7 +54,7 @@ class ListFragment : BaseFragment() {
     private fun initRecyclerView() {
         fragment_list_recyclerview.adapter = movieAdapter
         fragment_list_swiperefresh.setOnRefreshListener {
-            //TODO Reload datas
+            viewModel.reload()
         }
     }
 
@@ -84,11 +87,33 @@ class ListFragment : BaseFragment() {
                     onMoviesChanged(it)
                 }
         )
+
+        ViewBinderManager.subscribeValue(
+                lifecycle(RxLifecycleDelegate.FragmentEvent.DESTROY),
+                viewModel.searchingStatus,
+                {
+                    onSearchStatusChanged(it)
+                }
+        )
     }
 
     private fun onMoviesChanged(list: List<Movie>) {
         movieAdapter.submitList(list)
-        fragment_list_swiperefresh.isRefreshing = false
+        fragment_list_tv_error.visibility = GONE
+        fragment_list_recyclerview.visibility = VISIBLE
+    }
+
+    private fun onSearchStatusChanged(networkStatus: NetworkStatus) {
+        when(networkStatus){
+            is NetworkStatus.InProgress -> fragment_list_swiperefresh.isRefreshing = true
+            is NetworkStatus.Success -> fragment_list_swiperefresh.isRefreshing = false
+            is NetworkStatus.Error<*> -> {
+                fragment_list_swiperefresh.isRefreshing = false
+                fragment_list_tv_error.visibility = VISIBLE
+                fragment_list_recyclerview.visibility = GONE
+                fragment_list_tv_error.text = viewModel.getTextError(networkStatus.error)
+            }
+        }
     }
 
     //endregion

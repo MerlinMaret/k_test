@@ -26,7 +26,7 @@ val viewModelModule = Kodein.Module("viewModel") {
 
     //region Fragment
 
-    bind<ListFragmentViewModel.Factory>() with provider { ListFragmentViewModel.Factory(instance()) }
+    bind<ListFragmentViewModel.Factory>() with provider { ListFragmentViewModel.Factory(instance(), instance()) }
     bind<ListFragmentViewModel>() with factory { fragment: Fragment ->
         ViewModelProviders.of(fragment, instance<ListFragmentViewModel.Factory>())
                 .get(ListFragmentViewModel::class.java)

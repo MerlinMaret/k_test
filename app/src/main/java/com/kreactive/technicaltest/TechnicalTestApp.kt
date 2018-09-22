@@ -2,6 +2,8 @@ package com.kreactive.technicaltest
 
 import android.app.Application
 import android.content.Context
+import com.kreactive.technicaltest.dependencyinjection.errorModule
+import com.kreactive.technicaltest.dependencyinjection.networkModule
 import com.kreactive.technicaltest.dependencyinjection.repoModule
 import com.kreactive.technicaltest.dependencyinjection.viewModelModule
 import org.kodein.di.Kodein
@@ -18,6 +20,8 @@ class TechnicalTestApp : Application(), KodeinAware {
         bind<Application>() with singleton { this@TechnicalTestApp }
         bind<Context>() with singleton { instance<Application>() }
 
+        import(errorModule)
+        import(networkModule)
         import(viewModelModule)
         import(repoModule)
 
