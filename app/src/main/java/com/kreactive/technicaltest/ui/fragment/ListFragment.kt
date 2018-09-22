@@ -1,7 +1,5 @@
 package com.kreactive.technicaltest.ui.fragment
 
-import android.app.SearchManager
-import android.content.Context
 import android.os.Bundle
 import android.support.v7.widget.SearchView
 import android.view.*
@@ -15,14 +13,15 @@ import com.kreactive.technicaltest.viewmodel.ListFragmentViewModel
 import kotlinx.android.synthetic.main.fragment_list.*
 import org.kodein.di.generic.instance
 import android.view.MenuInflater
-import timber.log.Timber
 
 
-class ListFragment : BaseFragment(){
+class ListFragment : BaseFragment() {
 
     private val viewModel: ListFragmentViewModel by instance(arg = this)
 
     private val movieAdapter = MovieAdapter()
+
+    //region init
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,14 +40,43 @@ class ListFragment : BaseFragment(){
         subscribeViewModel()
     }
 
-    private fun initRecyclerView(){
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        inflater?.inflate(R.menu.list_menu, menu)
+
+        initSearchView(menu)
+
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    private fun initRecyclerView() {
         fragment_list_recyclerview.adapter = movieAdapter
         fragment_list_swiperefresh.setOnRefreshListener {
             //TODO Reload datas
         }
     }
 
-    private fun subscribeViewModel(){
+    private fun initSearchView(menu: Menu?) {
+
+        val searchView = (menu?.findItem(R.id.menu_search)?.actionView as SearchView)
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(text: String?): Boolean {
+                //Nothing, the search is in the onTextChange
+                return false
+            }
+
+            override fun onQueryTextChange(text: String?): Boolean {
+                viewModel.search(text)
+                return true
+            }
+        }
+        )
+    }
+
+    //endregion
+
+    //region subscriptions
+
+    private fun subscribeViewModel() {
         ViewBinderManager.subscribeValue(
                 lifecycle(RxLifecycleDelegate.FragmentEvent.DESTROY),
                 viewModel.moviesObservable,
@@ -58,13 +86,10 @@ class ListFragment : BaseFragment(){
         )
     }
 
-    private fun onMoviesChanged(list : List<Movie>){
+    private fun onMoviesChanged(list: List<Movie>) {
         movieAdapter.submitList(list)
         fragment_list_swiperefresh.isRefreshing = false
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        inflater?.inflate(R.menu.list_menu, menu)
-        super.onCreateOptionsMenu(menu, inflater)
-    }
+    //endregion
 }
