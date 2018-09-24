@@ -59,6 +59,9 @@ dependencies {
     implementation 'org.kodein.di:kodein-di-generic-jvm:5.2.0'
     implementation 'org.kodein.di:kodein-di-framework-android-support:5.2.0'
 
+    //FAB
+    implementation 'com.github.clans:fab:1.6.4'
+
     //Picasso
     implementation 'com.squareup.picasso:picasso:2.71828'
 

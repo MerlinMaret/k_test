@@ -7,6 +7,7 @@ import com.jakewharton.rxrelay2.BehaviorRelay
 import com.kreactive.technicaltest.api.NetworkStatus
 import com.kreactive.technicaltest.manager.ErrorManager
 import com.kreactive.technicaltest.model.Movie
+import com.kreactive.technicaltest.model.Type
 import com.kreactive.technicaltest.repository.MovieRepository
 import com.kreactive.technicaltest.viewmodel.base.BaseViewModel
 import io.reactivex.Observable
@@ -17,16 +18,33 @@ class ListFragmentViewModel(private val movieRepository: MovieRepository, privat
     private val movies: BehaviorRelay<List<Movie>> = movieRepository.movies
     val moviesObservable: Observable<List<Movie>> = movies.share()
     val searchingStatus: BehaviorRelay<NetworkStatus> = BehaviorRelay.createDefault(NetworkStatus.Idle)
-    private var searchText: String? = null
+    var searchText: String? = null
+    var type: Type? = null
+    var year: String? = null
 
     fun reload() {
-        search(searchText)
+        search(needReload = true)
     }
 
-    fun search(searchText: String?) {
+    fun search(
+            searchText: String? = this.searchText,
+            type: Type? = this.type,
+            year: String? = this.year,
+            needReload: Boolean = false
+    ) {
+        val isSameText = this.searchText == searchText
+        val isSameType = this.type == type
+        val isSameYear = this.year == year
+        val isTextEmpty = TextUtils.isEmpty(searchText)
+
         this.searchText = searchText
-        if (!TextUtils.isEmpty(searchText)) {
-            movieRepository.search(searchText!!)
+        this.type = type
+        this.year = year
+
+        val needWSCall = (!(isSameText && isSameType && isSameYear)) || needReload
+
+        if (!isTextEmpty && needWSCall) {
+            movieRepository.search(searchText!!, type, year)
                     .subscribe(
                             { searchingStatus.accept(it) },
                             {
