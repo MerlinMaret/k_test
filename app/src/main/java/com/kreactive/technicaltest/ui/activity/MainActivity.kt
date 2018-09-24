@@ -3,35 +3,67 @@ package com.kreactive.technicaltest.ui.activity
 import android.graphics.drawable.Drawable
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.design.widget.BottomSheetBehavior
 import android.support.v4.app.Fragment
+import android.view.Gravity
 import com.kreactive.technicaltest.R
-import com.kreactive.technicaltest.ui.fragment.ListFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import android.view.View
-import android.view.animation.Animation
-import android.view.animation.Transformation
+import com.kreactive.technicaltest.manager.TransitionManager
+import com.kreactive.technicaltest.ui.fragment.ListFragment
 
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var bottomSheetBehavior : BottomSheetBehavior<View>
+    val MOVE_DEFAULT_TIME: Long = 300
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        setFragment()
+        setFragment(ListFragment())
     }
 
     override fun onResume() {
         super.onResume()
     }
 
-    private fun setFragment() {
-        val fragmentTransition = supportFragmentManager.beginTransaction()
+    fun setFragment(
+            nextFragment: Fragment,
+            backStackName: String? = null,
+            sharedElements: List<Pair<View, String>> = emptyList(),
+            exitTransition: Any = TransitionManager.getSlideTransition(0, MOVE_DEFAULT_TIME),
+            reenterTransition: Any = TransitionManager.getSlideTransition(Math.max(MOVE_DEFAULT_TIME, MOVE_DEFAULT_TIME), MOVE_DEFAULT_TIME),
+            enterTransition: Any = TransitionManager.getSlideTransition(Math.max(MOVE_DEFAULT_TIME, MOVE_DEFAULT_TIME), MOVE_DEFAULT_TIME, Gravity.RIGHT),
+            returnTransition: Any = TransitionManager.getSlideTransition(0, MOVE_DEFAULT_TIME, Gravity.RIGHT)
+    ) {
+        val previousFragment = supportFragmentManager.findFragmentById(R.id.activity_main_fragment)
 
-        fragmentTransition.replace(R.id.activity_main_fragment, ListFragment())
+        val fragmentTransition = supportFragmentManager
+                .beginTransaction()
+
+        // region Transitions
+
+        previousFragment?.let {
+            previousFragment.exitTransition = exitTransition
+            previousFragment.reenterTransition = reenterTransition
+        }
+
+        nextFragment.enterTransition = enterTransition
+        nextFragment.returnTransition = returnTransition
+
+
+        for (sharedElement in sharedElements) {
+            fragmentTransition.addSharedElement(sharedElement.first, sharedElement.second)
+        }
+
+        //endregion
+
+        backStackName?.let {
+            fragmentTransition.addToBackStack(backStackName)
+        }
+
+        fragmentTransition.replace(R.id.activity_main_fragment, nextFragment)
+
 
         fragmentTransition.commit()
     }

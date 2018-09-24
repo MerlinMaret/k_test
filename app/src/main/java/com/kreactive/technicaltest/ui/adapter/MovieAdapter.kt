@@ -13,19 +13,23 @@ import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_movie.view.*
 import timber.log.Timber
 
-class MovieAdapter : ListAdapter<Movie, MovieViewHolder>(MovieDiffCallback()) {
+class MovieAdapter (val callback : MovieAdapter.Callback) : ListAdapter<Movie, MovieViewHolder>(MovieDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.item_movie, parent, false)
-        return MovieViewHolder(v)
+        return MovieViewHolder(v, callback)
     }
 
     override fun onBindViewHolder(viewHodler: MovieViewHolder, position: Int) {
         viewHodler.bind(getItem(position))
     }
+
+    interface Callback{
+        fun onItemClickListener(movie : Movie)
+    }
 }
 
-class MovieViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+class MovieViewHolder(view: View, val callback : MovieAdapter.Callback) : RecyclerView.ViewHolder(view) {
 
     fun bind(movie: Movie) {
         itemView.item_movie_title.text = movie.title
@@ -44,6 +48,9 @@ class MovieViewHolder(view: View) : RecyclerView.ViewHolder(view) {
                         }
                     }
                 )
+        itemView.setOnClickListener {
+            callback.onItemClickListener(movie)
+        }
     }
 }
 

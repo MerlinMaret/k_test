@@ -2,7 +2,6 @@ package com.kreactive.technicaltest.ui.fragment
 
 import android.os.Bundle
 import android.support.v7.widget.SearchView
-import android.text.TextUtils
 import android.view.*
 import com.kreactive.technicaltest.R
 import com.kreactive.technicaltest.manager.ViewBinderManager
@@ -18,14 +17,15 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import com.kreactive.technicaltest.api.NetworkStatus
 import com.kreactive.technicaltest.model.Type
+import com.kreactive.technicaltest.ui.activity.MainActivity
 import com.kreactive.technicaltest.ui.dialog.BottomSheetFilterFragment
 
 
-class ListFragment : BaseFragment(), BottomSheetFilterFragment.Callback {
+class ListFragment : BaseFragment(), BottomSheetFilterFragment.Callback, MovieAdapter.Callback {
 
     private val viewModel: ListFragmentViewModel by instance(arg = this)
 
-    private val movieAdapter = MovieAdapter()
+    private val movieAdapter = MovieAdapter(this)
 
     //region init
 
@@ -146,6 +146,14 @@ class ListFragment : BaseFragment(), BottomSheetFilterFragment.Callback {
 
     override fun onYearChanged(year: String?) {
         viewModel.search(year = year)
+    }
+
+    //endregion
+
+    //region List Callback
+
+    override fun onItemClickListener(movie: Movie) {
+        (activity as? MainActivity)?.setFragment(DetailFragment.newInstance(movie.imdbID), DetailFragment::class.java.name)
     }
 
     //endregion
