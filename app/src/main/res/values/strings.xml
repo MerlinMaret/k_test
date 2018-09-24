@@ -1,3 +1,22 @@
 <resources>
-    <string name="app_name">technicaltest</string>
+    <string name="app_name">OMDb</string>
+
+    <!-- region Errors -->
+
+    <string name="error_too_many_result">Too many result, please refine you search</string>
+    <string name="error_no_result">No result</string>
+    <string name="error_unknow">Unknow Error</string>
+
+    <!-- endregion -->
+
+    <!-- region Filters -->
+
+    <string name="filters">Filtres</string>
+    <string name="year">Year</string>
+    <string name="movies">Movies</string>
+    <string name="series">Series</string>
+    <string name="episode">Episode</string>
+
+    <!-- endregion -->
+
 </resources>
