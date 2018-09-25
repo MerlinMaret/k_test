@@ -15,6 +15,7 @@ import org.kodein.di.generic.instance
 import android.view.MenuInflater
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import com.kreactive.technicaltest.BuildConfig
 import com.kreactive.technicaltest.api.NetworkStatus
 import com.kreactive.technicaltest.model.Type
 import com.kreactive.technicaltest.ui.activity.MainActivity
@@ -42,6 +43,7 @@ class ListFragment : BaseFragment(), BottomSheetFilterFragment.Callback, MovieAd
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        (activity as? MainActivity)?.supportActionBar?.title = getString(R.string.app_name)
         initRecyclerView()
         subscribeViewModel()
     }
@@ -101,8 +103,8 @@ class ListFragment : BaseFragment(), BottomSheetFilterFragment.Callback, MovieAd
 
     private fun onMoviesChanged(list: List<Movie>) {
         movieAdapter.submitList(list)
-        fragment_list_tv_error.visibility = GONE
-        fragment_list_recyclerview.visibility = VISIBLE
+        fragment_list_tv_error?.visibility = GONE
+        fragment_list_recyclerview?.visibility = VISIBLE
     }
 
     private fun onSearchStatusChanged(networkStatus: NetworkStatus) {
@@ -110,10 +112,10 @@ class ListFragment : BaseFragment(), BottomSheetFilterFragment.Callback, MovieAd
             is NetworkStatus.InProgress -> fragment_list_swiperefresh.isRefreshing = true
             is NetworkStatus.Success -> fragment_list_swiperefresh.isRefreshing = false
             is NetworkStatus.Error<*> -> {
-                fragment_list_swiperefresh.isRefreshing = false
-                fragment_list_tv_error.visibility = VISIBLE
-                fragment_list_recyclerview.visibility = GONE
-                fragment_list_tv_error.text = viewModel.getTextError(networkStatus.error)
+                fragment_list_swiperefresh?.isRefreshing = false
+                fragment_list_tv_error?.visibility = VISIBLE
+                fragment_list_recyclerview?.visibility = GONE
+                fragment_list_tv_error?.text = viewModel.getTextError(networkStatus.error)
             }
         }
     }

@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit
 
 val networkModule = Kodein.Module("network") {
 
-    val wsUrl = "http://www.omdbapi.com"
+    val wsUrl = "https://www.omdbapi.com"
 
     //region TAGs
 

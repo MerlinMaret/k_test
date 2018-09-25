@@ -37,7 +37,7 @@ class MovieViewHolder(view: View, val callback : MovieAdapter.Callback) : Recycl
 
         Picasso.get()
                 .load(movie.posterUrl)
-                .error(R.drawable.ic_launcher_background)
+                .error(R.drawable.ic_noposter)
                 .into(itemView.item_movie_iv_poster, object : Callback {
                         override fun onSuccess() {
                             Timber.d("Success")
