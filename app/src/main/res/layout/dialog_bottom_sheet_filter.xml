@@ -2,8 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/colorAccent">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <TextView
         android:id="@+id/dialog_bottom_filter_tv_title"
@@ -31,12 +30,25 @@
         android:id="@+id/dialog_bottom_filter_s_year"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/dialog_bottom_filter_b_remove_year"
         app:layout_constraintStart_toStartOf="parent"
+        android:animateLayoutChanges="true"
         app:layout_constraintTop_toBottomOf="@id/dialog_bottom_filter_separator1" />
+
+    <ImageButton
+        android:id="@+id/dialog_bottom_filter_b_remove_year"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/ic_close"
+        android:layout_marginEnd="8dp"
+        android:animateLayoutChanges="true"
+        app:layout_constraintBottom_toBottomOf="@+id/dialog_bottom_filter_s_year"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/dialog_bottom_filter_s_year" />
 
     <View
         android:id="@+id/dialog_bottom_filter_separator2"

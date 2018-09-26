@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.kreactive.technicaltest.viewmodel.DetailFragmentViewModel
 import com.kreactive.technicaltest.viewmodel.ListFragmentViewModel
 import com.kreactive.technicaltest.viewmodel.MainActivityViewModel
+import com.kreactive.technicaltest.viewmodel.SearchFragmentViewModel
 import org.kodein.di.Kodein
 import org.kodein.di.generic.bind
 import org.kodein.di.generic.factory
@@ -36,6 +37,12 @@ val viewModelModule = Kodein.Module("viewModel") {
     bind<DetailFragmentViewModel>() with factory { fragment: Fragment ->
         ViewModelProviders.of(fragment, instance<DetailFragmentViewModel.Factory>())
                 .get(DetailFragmentViewModel::class.java)
+    }
+
+    bind<SearchFragmentViewModel.Factory>() with provider { SearchFragmentViewModel.Factory(instance(), instance()) }
+    bind<SearchFragmentViewModel>() with factory { fragment: Fragment ->
+        ViewModelProviders.of(fragment, instance<SearchFragmentViewModel.Factory>())
+                .get(SearchFragmentViewModel::class.java)
     }
 
     //endregion

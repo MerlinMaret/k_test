@@ -14,7 +14,7 @@ import io.reactivex.Observable
 import rx.Subscription
 import timber.log.Timber
 
-class ListFragmentViewModel(private val movieRepository: MovieRepository, private val errorManager: ErrorManager) : BaseViewModel() {
+class SearchFragmentViewModel(private val movieRepository: MovieRepository, private val errorManager: ErrorManager) : BaseViewModel() {
 
     private val movies: BehaviorRelay<List<Movie>> = movieRepository.movies
     val moviesObservable: Observable<List<Movie>> = movies.share()
@@ -22,11 +22,7 @@ class ListFragmentViewModel(private val movieRepository: MovieRepository, privat
     var searchText: String? = null
     var type: Type? = null
     var year: String? = null
-    private var searchSubscription : Subscription? = null
-
-    fun reload() {
-        search(needReload = true)
-    }
+    var searchSubscription : Subscription? = null
 
     fun search(
             searchText: String? = this.searchText,
@@ -67,7 +63,7 @@ class ListFragmentViewModel(private val movieRepository: MovieRepository, privat
     class Factory(private val movieRepository: MovieRepository, private val errorManager: ErrorManager) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             @Suppress("UNCHECKED_CAST")
-            return ListFragmentViewModel(movieRepository, errorManager) as T
+            return SearchFragmentViewModel(movieRepository, errorManager) as T
         }
     }
 }

@@ -5,6 +5,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import androidx.fragment.app.FragmentManager
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.AdapterView
 import com.kreactive.technicaltest.R
@@ -69,10 +71,22 @@ class BottomSheetFilterFragment : BottomSheetDialogFragment(), KodeinAware {
             }
 
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
-                val year = yearAdapter?.getItem(position) as? String
+                val year : String?
+                if(position == 0){
+                    year = null
+                    dialog_bottom_filter_b_remove_year.visibility = GONE
+
+                }
+                else {
+                    year = yearAdapter?.getItem(position) as? String
+                    dialog_bottom_filter_b_remove_year.visibility = VISIBLE
+                }
                 callback?.onYearChanged(year)
             }
+        }
 
+        dialog_bottom_filter_b_remove_year.setOnClickListener {
+            dialog_bottom_filter_s_year.setSelection(0)
         }
     }
 
