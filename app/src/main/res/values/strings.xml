@@ -19,4 +19,10 @@
 
     <!-- endregion -->
 
+    <!-- region Transition Name -->
+
+    <string name="transition_poster">poster</string>
+    <string name="transition_year">year</string>
+
+    <!-- endregion -->
 </resources>

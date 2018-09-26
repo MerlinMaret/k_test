@@ -1,6 +1,6 @@
 package com.kreactive.technicaltest.ui.activity.base
 
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import com.kreactive.technicaltest.utils.RxLifecycleDelegate
 import io.reactivex.Observable
 import org.kodein.di.KodeinAware

@@ -1,8 +1,8 @@
 package com.kreactive.technicaltest.ui.adapter
 
-import android.support.v7.recyclerview.extensions.ListAdapter
-import android.support.v7.util.DiffUtil
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,7 +25,7 @@ class MovieAdapter (val callback : MovieAdapter.Callback) : ListAdapter<Movie, M
     }
 
     interface Callback{
-        fun onItemClickListener(movie : Movie)
+        fun onItemClickListener(movie : Movie, sharedElements : List<Pair<View,String>>)
     }
 }
 
@@ -49,8 +49,12 @@ class MovieViewHolder(view: View, val callback : MovieAdapter.Callback) : Recycl
                     }
                 )
         itemView.setOnClickListener {
-            callback.onItemClickListener(movie)
+            callback.onItemClickListener(movie, getSharedElements())
         }
+    }
+
+    private fun getSharedElements() : List<Pair<View,String>> {
+        return emptyList()
     }
 }
 

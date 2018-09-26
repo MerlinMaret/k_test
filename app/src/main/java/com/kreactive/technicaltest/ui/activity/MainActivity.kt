@@ -1,18 +1,19 @@
 package com.kreactive.technicaltest.ui.activity
 
 import android.graphics.drawable.Drawable
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
+import android.transition.TransitionSet
 import android.view.Gravity
 import com.kreactive.technicaltest.R
-import kotlinx.android.synthetic.main.activity_main.*
 import android.view.View
 import com.kreactive.technicaltest.manager.TransitionManager
+import com.kreactive.technicaltest.ui.activity.base.BaseActivity
 import com.kreactive.technicaltest.ui.fragment.ListFragment
+import kotlinx.android.synthetic.main.activity_main.*
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
 
     val MOVE_DEFAULT_TIME: Long = 300
 
@@ -34,7 +35,8 @@ class MainActivity : AppCompatActivity() {
             exitTransition: Any = TransitionManager.getSlideTransition(0, MOVE_DEFAULT_TIME),
             reenterTransition: Any = TransitionManager.getSlideTransition(Math.max(MOVE_DEFAULT_TIME, MOVE_DEFAULT_TIME), MOVE_DEFAULT_TIME),
             enterTransition: Any = TransitionManager.getSlideTransition(Math.max(MOVE_DEFAULT_TIME, MOVE_DEFAULT_TIME), MOVE_DEFAULT_TIME, Gravity.RIGHT),
-            returnTransition: Any = TransitionManager.getSlideTransition(0, MOVE_DEFAULT_TIME, Gravity.RIGHT)
+            returnTransition: Any = TransitionManager.getSlideTransition(0, MOVE_DEFAULT_TIME, Gravity.RIGHT),
+            sharedElementsTransition: TransitionSet = TransitionManager.getSharedElementsTransition(0, MOVE_DEFAULT_TIME,this)
     ) {
         val previousFragment = supportFragmentManager.findFragmentById(R.id.activity_main_fragment)
 
@@ -51,6 +53,7 @@ class MainActivity : AppCompatActivity() {
         nextFragment.enterTransition = enterTransition
         nextFragment.returnTransition = returnTransition
 
+        nextFragment.sharedElementEnterTransition = sharedElementsTransition
 
         for (sharedElement in sharedElements) {
             fragmentTransition.addSharedElement(sharedElement.first, sharedElement.second)

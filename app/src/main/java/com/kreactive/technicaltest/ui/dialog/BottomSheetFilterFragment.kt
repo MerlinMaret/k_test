@@ -1,8 +1,8 @@
 package com.kreactive.technicaltest.ui.dialog
 
 import android.os.Bundle
-import android.support.design.widget.BottomSheetDialogFragment
-import android.support.v4.app.FragmentManager
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import androidx.fragment.app.FragmentManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +12,7 @@ import com.kreactive.technicaltest.model.Type
 import com.kreactive.technicaltest.ui.adapter.YearAdapter
 import kotlinx.android.synthetic.main.dialog_bottom_sheet_filter.*
 import org.kodein.di.KodeinAware
-import org.kodein.di.android.support.closestKodein
+import org.kodein.di.android.x.closestKodein
 
 class BottomSheetFilterFragment : BottomSheetDialogFragment(), KodeinAware {
     override val kodein by closestKodein()
@@ -49,6 +49,7 @@ class BottomSheetFilterFragment : BottomSheetDialogFragment(), KodeinAware {
 
         context?.let { yearAdapter = YearAdapter(it) }
         dialog_bottom_filter_s_year.adapter = yearAdapter
+        dialog_bottom_filter_s_year.setSelection(yearAdapter?.years?.indexOf(selectedYear) ?: 0)
     }
 
     private fun setActions() {

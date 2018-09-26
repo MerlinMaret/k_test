@@ -1,7 +1,7 @@
 package com.kreactive.technicaltest.ui.fragment
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
@@ -9,7 +9,6 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toolbar
 import com.kreactive.technicaltest.R
 import com.kreactive.technicaltest.manager.ViewBinderManager
 import com.kreactive.technicaltest.model.Movie
@@ -20,9 +19,10 @@ import com.kreactive.technicaltest.viewmodel.DetailFragmentViewModel
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_detail.*
-import kotlinx.android.synthetic.main.item_movie.view.*
 import org.kodein.di.generic.instance
 import timber.log.Timber
+
+
 
 class DetailFragment : BaseFragment() {
 
@@ -52,6 +52,7 @@ class DetailFragment : BaseFragment() {
         loadDatas()
         subscribeViewModel()
     }
+
 
     private fun loadDatas() {
         viewModel.loadDatas(arguments?.getString(MOVIE_ID))

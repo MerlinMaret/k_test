@@ -7,6 +7,8 @@ import com.kreactive.technicaltest.model.Movie
 import com.kreactive.technicaltest.model.Rating
 import com.kreactive.technicaltest.model.Type
 import rx.Observable
+import rx.Subscriber
+import rx.Subscription
 import rx.schedulers.Schedulers
 import rx.android.schedulers.AndroidSchedulers
 import java.time.Year
@@ -16,6 +18,7 @@ class MovieRepository(private val service : OMDbService){
     val movies : BehaviorRelay<List<Movie>> = BehaviorRelay.createDefault(emptyList())
 
     fun search(search : String, type : Type?, year: String?): Observable<NetworkStatus> {
+
 
         val obs = service.search(search, type = type.toString(), year = year)
                 .subscribeOn(Schedulers.io())
@@ -34,6 +37,7 @@ class MovieRepository(private val service : OMDbService){
                     }
                 }
                 .onErrorReturn { NetworkStatus.Error(it) }
+                .doOnUnsubscribe {  }
                 .startWith(NetworkStatus.InProgress)
                 .share()
 

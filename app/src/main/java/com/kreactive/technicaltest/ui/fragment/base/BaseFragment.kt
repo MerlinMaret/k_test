@@ -1,17 +1,14 @@
 package com.kreactive.technicaltest.ui.fragment.base
 
-import android.graphics.Color
-import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.content.ContextCompat
+import androidx.core.content.ContextCompat
 import android.view.View
-import com.kreactive.technicaltest.R
+import androidx.fragment.app.Fragment
 import com.kreactive.technicaltest.ui.activity.MainActivity
 import com.kreactive.technicaltest.utils.RxLifecycleDelegate
 import io.reactivex.Observable
 import org.kodein.di.KodeinAware
-import org.kodein.di.android.support.closestKodein
+import org.kodein.di.android.x.closestKodein
 
 abstract class BaseFragment : Fragment(), KodeinAware {
 

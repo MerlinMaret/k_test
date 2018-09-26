@@ -1,7 +1,7 @@
 package com.kreactive.technicaltest.ui.fragment
 
 import android.os.Bundle
-import android.support.v7.widget.SearchView
+import androidx.appcompat.widget.SearchView
 import android.view.*
 import com.kreactive.technicaltest.R
 import com.kreactive.technicaltest.manager.ViewBinderManager
@@ -15,7 +15,6 @@ import org.kodein.di.generic.instance
 import android.view.MenuInflater
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import com.kreactive.technicaltest.BuildConfig
 import com.kreactive.technicaltest.api.NetworkStatus
 import com.kreactive.technicaltest.model.Type
 import com.kreactive.technicaltest.ui.activity.MainActivity
@@ -154,8 +153,8 @@ class ListFragment : BaseFragment(), BottomSheetFilterFragment.Callback, MovieAd
 
     //region List Callback
 
-    override fun onItemClickListener(movie: Movie) {
-        (activity as? MainActivity)?.setFragment(DetailFragment.newInstance(movie.imdbID), DetailFragment::class.java.name)
+    override fun onItemClickListener(movie: Movie, sharedElements :  List<Pair<View,String>>) {
+        (activity as? MainActivity)?.setFragment(DetailFragment.newInstance(movie.imdbID), DetailFragment::class.java.name, sharedElements = sharedElements)
     }
 
     //endregion

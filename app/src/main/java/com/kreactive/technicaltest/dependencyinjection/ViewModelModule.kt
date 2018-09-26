@@ -1,10 +1,8 @@
 package com.kreactive.technicaltest.dependencyinjection
 
-import android.arch.lifecycle.ViewModelProviders
-import android.support.v4.app.Fragment
-import android.support.v7.app.AppCompatActivity
-import com.kreactive.technicaltest.ui.fragment.DetailFragment
-import com.kreactive.technicaltest.ui.fragment.base.BaseFragment
+import androidx.lifecycle.ViewModelProviders
+import androidx.fragment.app.Fragment
+import androidx.appcompat.app.AppCompatActivity
 import com.kreactive.technicaltest.viewmodel.DetailFragmentViewModel
 import com.kreactive.technicaltest.viewmodel.ListFragmentViewModel
 import com.kreactive.technicaltest.viewmodel.MainActivityViewModel

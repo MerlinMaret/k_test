@@ -1,7 +1,7 @@
 package com.kreactive.technicaltest.viewmodel
 
-import android.arch.lifecycle.ViewModel
-import android.arch.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import android.text.TextUtils
 import com.jakewharton.rxrelay2.BehaviorRelay
 import com.kreactive.technicaltest.api.NetworkStatus
@@ -11,6 +11,7 @@ import com.kreactive.technicaltest.model.Type
 import com.kreactive.technicaltest.repository.MovieRepository
 import com.kreactive.technicaltest.viewmodel.base.BaseViewModel
 import io.reactivex.Observable
+import rx.Subscription
 import timber.log.Timber
 
 class ListFragmentViewModel(private val movieRepository: MovieRepository, private val errorManager: ErrorManager) : BaseViewModel() {
@@ -21,6 +22,7 @@ class ListFragmentViewModel(private val movieRepository: MovieRepository, privat
     var searchText: String? = null
     var type: Type? = null
     var year: String? = null
+    var searchSubscription : Subscription? = null
 
     fun reload() {
         search(needReload = true)
@@ -44,7 +46,10 @@ class ListFragmentViewModel(private val movieRepository: MovieRepository, privat
         val needWSCall = (!(isSameText && isSameType && isSameYear)) || needReload
 
         if (!isTextEmpty && needWSCall) {
-            movieRepository.search(searchText!!, type, year)
+            searchSubscription?.unsubscribe()
+            searchingStatus.accept(NetworkStatus.Idle)
+            searchSubscription = movieRepository
+                    .search(searchText!!, type, year)
                     .subscribe(
                             { searchingStatus.accept(it) },
                             {
