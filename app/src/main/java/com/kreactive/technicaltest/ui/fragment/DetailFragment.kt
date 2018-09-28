@@ -25,7 +25,7 @@ import timber.log.Timber
 
 
 class DetailFragment : BaseFragment() {
-
+/*
     private val viewModel: DetailFragmentViewModel by instance(arg = this)
 
     companion object {
@@ -122,5 +122,5 @@ class DetailFragment : BaseFragment() {
             textView.text = text
         }
 
-    }
+    }*/
 }

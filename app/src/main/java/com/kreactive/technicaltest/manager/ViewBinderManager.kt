@@ -10,16 +10,6 @@ import timber.log.Timber
 
 class ViewBinderManager {
     companion object {
-        fun bindTextView(lifecycle: Observable<RxLifecycleDelegate.LifecycleEvent>, textView: TextView, variable: Relay<String>) {
-            variable.takeUntil(lifecycle)
-                    .subscribe(textView.nonEmittingText())
-
-            textView.textChanges()
-                    .takeUntil(lifecycle)
-                    .map { it.toString() }
-                    .subscribe(variable)
-        }
-
         fun <T> subscribeValue(
                 lifecycle: Observable<RxLifecycleDelegate.LifecycleEvent>,
                 variable: Observable<T>,

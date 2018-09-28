@@ -55,7 +55,7 @@ data class Movie(
 ) {
 
     override fun equals(other: Any?): Boolean {
-        var isEquals: Boolean
+        val isEquals: Boolean
         isEquals = if (other is Movie) { imdbID.equals(other.imdbID) } else { false }
         return isEquals
     }

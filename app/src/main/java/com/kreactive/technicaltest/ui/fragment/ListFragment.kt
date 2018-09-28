@@ -15,6 +15,7 @@ import org.kodein.di.generic.instance
 import android.view.MenuInflater
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import androidx.paging.PagedList
 import com.kreactive.technicaltest.api.NetworkStatus
 import com.kreactive.technicaltest.model.Type
 import com.kreactive.technicaltest.ui.activity.MainActivity
@@ -71,7 +72,7 @@ class ListFragment : BaseFragment(), BottomSheetFilterFragment.Callback, MovieAd
             }
 
             override fun onQueryTextChange(text: String?): Boolean {
-                viewModel.search(searchText = text)
+                viewModel.search(text)
                 return true
             }
         }
@@ -85,7 +86,7 @@ class ListFragment : BaseFragment(), BottomSheetFilterFragment.Callback, MovieAd
     private fun subscribeViewModel() {
         ViewBinderManager.subscribeValue(
                 lifecycle(RxLifecycleDelegate.FragmentEvent.DESTROY),
-                viewModel.moviesObservable,
+                viewModel.movies,
                 {
                     onMoviesChanged(it)
                 }
@@ -100,7 +101,7 @@ class ListFragment : BaseFragment(), BottomSheetFilterFragment.Callback, MovieAd
         )
     }
 
-    private fun onMoviesChanged(list: List<Movie>) {
+    private fun onMoviesChanged(list: PagedList<Movie>) {
         movieAdapter.submitList(list)
         fragment_list_tv_error?.visibility = GONE
         fragment_list_recyclerview?.visibility = VISIBLE
@@ -133,7 +134,7 @@ class ListFragment : BaseFragment(), BottomSheetFilterFragment.Callback, MovieAd
     }
 
     private fun showBottomSheet() {
-        BottomSheetFilterFragment().show(fragmentManager,"BottomSheetFilterFragment", viewModel.type, viewModel.year, this)
+        BottomSheetFilterFragment().show(fragmentManager,"BottomSheetFilterFragment", viewModel.getType(), viewModel.getYear(), this)
     }
 
     //endregion
@@ -154,7 +155,7 @@ class ListFragment : BaseFragment(), BottomSheetFilterFragment.Callback, MovieAd
     //region List Callback
 
     override fun onItemClickListener(movie: Movie, sharedElements :  List<Pair<View,String>>) {
-        (activity as? MainActivity)?.setFragment(DetailFragment.newInstance(movie.imdbID), DetailFragment::class.java.name, sharedElements = sharedElements)
+        //(activity as? MainActivity)?.setFragment(DetailFragment.newInstance(movie.imdbID), DetailFragment::class.java.name, sharedElements = sharedElements)
     }
 
     //endregion

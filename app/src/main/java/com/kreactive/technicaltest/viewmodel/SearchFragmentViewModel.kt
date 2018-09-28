@@ -15,7 +15,7 @@ import rx.Subscription
 import timber.log.Timber
 
 class SearchFragmentViewModel(private val movieRepository: MovieRepository, private val errorManager: ErrorManager) : BaseViewModel() {
-
+/*
     private val movies: BehaviorRelay<List<Movie>> = movieRepository.movies
     val moviesObservable: Observable<List<Movie>> = movies.share()
     val searchingStatus: BehaviorRelay<NetworkStatus> = BehaviorRelay.createDefault(NetworkStatus.Idle)
@@ -59,7 +59,7 @@ class SearchFragmentViewModel(private val movieRepository: MovieRepository, priv
     fun getTextError(error: Throwable): String {
         return errorManager.getTextError(error)
     }
-
+*/
     class Factory(private val movieRepository: MovieRepository, private val errorManager: ErrorManager) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             @Suppress("UNCHECKED_CAST")

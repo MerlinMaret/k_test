@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.paging.PagedListAdapter
 import com.kreactive.technicaltest.R
 import com.kreactive.technicaltest.model.Movie
 import com.squareup.picasso.Callback
@@ -13,7 +14,7 @@ import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_movie.view.*
 import timber.log.Timber
 
-class MovieAdapter (val callback : MovieAdapter.Callback) : ListAdapter<Movie, MovieViewHolder>(MovieDiffCallback()) {
+class MovieAdapter (val callback : MovieAdapter.Callback) : PagedListAdapter<Movie, MovieViewHolder>(MovieDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.item_movie, parent, false)
@@ -31,12 +32,12 @@ class MovieAdapter (val callback : MovieAdapter.Callback) : ListAdapter<Movie, M
 
 class MovieViewHolder(view: View, val callback : MovieAdapter.Callback) : RecyclerView.ViewHolder(view) {
 
-    fun bind(movie: Movie) {
-        itemView.item_movie_title.text = movie.title
-        itemView.item_movie_year.text = movie.year
+    fun bind(movie: Movie?) {
+        itemView.item_movie_title.text = movie?.title
+        itemView.item_movie_year.text = movie?.year
 
         Picasso.get()
-                .load(movie.posterUrl)
+                .load(movie?.posterUrl)
                 .error(R.drawable.ic_noposter)
                 .into(itemView.item_movie_iv_poster, object : Callback {
                         override fun onSuccess() {
@@ -48,8 +49,8 @@ class MovieViewHolder(view: View, val callback : MovieAdapter.Callback) : Recycl
                         }
                     }
                 )
-        itemView.setOnClickListener {
-            callback.onItemClickListener(movie, getSharedElements())
+        itemView.setOnClickListener { view ->
+            movie?.let { callback.onItemClickListener(it, getSharedElements())}
         }
     }
 

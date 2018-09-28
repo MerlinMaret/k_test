@@ -23,12 +23,8 @@ class MainActivity : BaseActivity() {
         setContentView(R.layout.activity_main)
 
         if(savedInstanceState == null){
-            setFragment(SearchFragment())
+            setFragment(ListFragment())
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
     }
 
     fun setFragment(

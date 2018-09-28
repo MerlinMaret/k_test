@@ -94,5 +94,4 @@ class BottomSheetFilterFragment : BottomSheetDialogFragment(), KodeinAware {
         fun onTypeCheckChanged(type: Type?)
         fun onYearChanged(year: String?)
     }
-
 }

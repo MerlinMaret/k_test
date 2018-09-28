@@ -17,7 +17,7 @@ import kotlinx.android.synthetic.main.fragment_search.*
 import org.kodein.di.generic.instance
 
 class SearchFragment : BaseFragment(){
-
+/*
     private val viewModel: SearchFragmentViewModel by instance(arg = this)
 
     //region init
@@ -68,5 +68,5 @@ class SearchFragment : BaseFragment(){
                 fragment_search_errors.visibility = GONE
             }
         }
-    }
+    }*/
 }
