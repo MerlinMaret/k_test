@@ -109,8 +109,8 @@ class ListFragment : BaseFragment(), BottomSheetFilterFragment.Callback, MovieAd
 
     private fun onSearchStatusChanged(networkStatus: NetworkStatus) {
         when (networkStatus) {
-            is NetworkStatus.InProgress -> fragment_list_swiperefresh.isRefreshing = true
-            is NetworkStatus.Success -> fragment_list_swiperefresh.isRefreshing = false
+            is NetworkStatus.InProgress -> fragment_list_swiperefresh?.isRefreshing = true
+            is NetworkStatus.Success -> fragment_list_swiperefresh?.isRefreshing = false
             is NetworkStatus.Error<*> -> {
                 fragment_list_swiperefresh?.isRefreshing = false
                 fragment_list_tv_error?.visibility = VISIBLE
@@ -155,7 +155,7 @@ class ListFragment : BaseFragment(), BottomSheetFilterFragment.Callback, MovieAd
     //region List Callback
 
     override fun onItemClickListener(movie: Movie, sharedElements :  List<Pair<View,String>>) {
-        //(activity as? MainActivity)?.setFragment(DetailFragment.newInstance(movie.imdbID), DetailFragment::class.java.name, sharedElements = sharedElements)
+        (activity as? MainActivity)?.setFragment(DetailFragment.newInstance(movie.imdbID), DetailFragment::class.java.name, sharedElements = sharedElements)
     }
 
     //endregion

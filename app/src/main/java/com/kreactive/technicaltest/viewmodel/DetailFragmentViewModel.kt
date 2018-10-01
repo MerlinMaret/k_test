@@ -11,28 +11,37 @@ import io.reactivex.Observable
 import timber.log.Timber
 
 class DetailFragmentViewModel(private val movieRepository: MovieRepository, private val errorManager: ErrorManager) : BaseViewModel() {
-/*
+
     var movieId: String? = null
-    val movie: Observable<Movie> = movieRepository.movies.map { it.find { it.imdbID == movieId } }
+    val movie: Observable<Movie?> = movieRepository.listing.pagedList.map { pagedList ->
+        if(pagedList.size > 0){
+            pagedList[0]
+        }
+        else {
+            null
+        }
+    }
 
     fun loadDatas(movieId: String?) {
         this.movieId = movieId
 
         movie.subscribe {
-            if (it.rated == null) {
+            if (it?.rated == null) {
                 getDetails(it)
             }
         }.disposedBy(disposeBag)
     }
 
-    private fun getDetails(movie: Movie) {
-        movieRepository
-                .getMovie(movie)
-                .subscribe {
-                    Timber.i(movie.toString())
-                }
+    private fun getDetails(movie: Movie?) {
+        movie?.let{
+            movieRepository
+                    .getMovie(movie)
+                    .subscribe {
+                        Timber.i(movie.toString())
+                    }
+        }
     }
-*/
+
     class Factory(private val movieRepository: MovieRepository, private val errorManager: ErrorManager) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             @Suppress("UNCHECKED_CAST")

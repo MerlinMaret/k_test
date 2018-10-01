@@ -5,35 +5,40 @@ import androidx.lifecycle.ViewModelProvider
 import android.text.TextUtils
 import androidx.paging.PagedList
 import com.jakewharton.rxrelay2.BehaviorRelay
+import com.jakewharton.rxrelay2.PublishRelay
 import com.kreactive.technicaltest.api.NetworkStatus
 import com.kreactive.technicaltest.manager.ErrorManager
 import com.kreactive.technicaltest.model.Movie
 import com.kreactive.technicaltest.model.Type
 import com.kreactive.technicaltest.repository.Listing
 import com.kreactive.technicaltest.repository.MovieRepository
+import com.kreactive.technicaltest.utils.disposedBy
 import com.kreactive.technicaltest.viewmodel.base.BaseViewModel
 import io.reactivex.Observable
+import io.reactivex.disposables.Disposable
 import io.reactivex.subjects.BehaviorSubject
 
 class ListFragmentViewModel(private val movieRepository: MovieRepository, private val errorManager: ErrorManager) : BaseViewModel() {
 
-    private val searchText: BehaviorRelay<String> = BehaviorRelay.createDefault("")
-    private val searchType: BehaviorRelay<Type?> = BehaviorRelay.createDefault(Type.movie)
-    private val searchYear: BehaviorRelay<String?> = BehaviorRelay.createDefault("")
-    val listing: Observable<Listing<Movie>>
+    private val searchText: PublishRelay<String> = PublishRelay.create()
+    private val searchType: PublishRelay<Type?> = PublishRelay.create()
+    private val searchYear: PublishRelay<String?> = PublishRelay.create()
     val movies: Observable<PagedList<Movie>>
     val searchingStatus: Observable<NetworkStatus>
+    private var searchDisposable : Disposable
 
 
     //region Init
 
     init {
-        listing = initListing()
-        movies = initMovies()
-        searchingStatus = initSearchingStatus()
+        val searchObservable = initSearch()
+        movies = initMovies(searchObservable)
+        searchingStatus = initSearchingStatus(searchObservable)
+        searchDisposable = searchObservable.subscribe()
+        searchDisposable.disposedBy(disposeBag)
     }
 
-    private fun initListing(): Observable<Listing<Movie>> {
+    private fun initSearch() : Observable<Listing<Movie>>{
         return Observable.combineLatest(
                 arrayOf(searchText,
                         searchType,
@@ -42,20 +47,19 @@ class ListFragmentViewModel(private val movieRepository: MovieRepository, privat
             val text = list[0] as String
             val type = list[1] as Type?
             val year = list[2] as String?
-            MovieRepository.SearchDatas(text, type, year)
-        }.map {
-            movieRepository.search(it)
+            val searchData = MovieRepository.SearchDatas(text, type, year)
+            movieRepository.search(searchData)
         }
     }
 
-    private fun initMovies(): Observable<PagedList<Movie>> {
-        return listing.flatMap {
+    private fun initMovies(searchObservable : Observable<Listing<Movie>>): Observable<PagedList<Movie>> {
+        return searchObservable.flatMap {
             it.pagedList
         }
     }
 
-    private fun initSearchingStatus(): Observable<NetworkStatus> {
-        return listing.flatMap {
+    private fun initSearchingStatus(searchObservable : Observable<Listing<Movie>>): Observable<NetworkStatus> {
+        return searchObservable.flatMap {
             it.networkState
         }
     }
@@ -79,9 +83,9 @@ class ListFragmentViewModel(private val movieRepository: MovieRepository, privat
 
         val needWSCall = (!(isSameText && isSameType && isSameYear)) || needReload
         if (!isTextEmpty && needWSCall) {
-            this.searchText.accept(text)
-            type?.let { this.searchType.accept(type) }
-            year?.let { this.searchYear.accept(year) }
+            if(!isSameText) { this.searchText.accept(text) }
+            if(!isSameType) { this.searchType.accept(type) }
+            if(!isSameYear) { this.searchYear.accept(year) }
         }
     }
 

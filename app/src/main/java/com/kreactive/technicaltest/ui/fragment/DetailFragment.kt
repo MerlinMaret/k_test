@@ -25,7 +25,7 @@ import timber.log.Timber
 
 
 class DetailFragment : BaseFragment() {
-/*
+
     private val viewModel: DetailFragmentViewModel by instance(arg = this)
 
     companion object {
@@ -68,10 +68,12 @@ class DetailFragment : BaseFragment() {
         )
     }
 
-    private fun onMovieChanged(movie: Movie) {
+    private fun onMovieChanged(movie: Movie?) {
         Timber.i(movie.toString())
-        (activity as? MainActivity)?.supportActionBar?.title = movie.title
-        showDatas(movie)
+        (activity as? MainActivity)?.supportActionBar?.title = movie?.title
+        movie?.let {
+            showDatas(movie)
+        }
     }
 
     private fun showDatas(movie: Movie) {
@@ -122,5 +124,5 @@ class DetailFragment : BaseFragment() {
             textView.text = text
         }
 
-    }*/
+    }
 }

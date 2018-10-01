@@ -2,6 +2,8 @@ package com.kreactive.technicaltest.repository
 
 import androidx.paging.PagedList
 import androidx.paging.RxPagedListBuilder
+import com.jakewharton.rxrelay2.BehaviorRelay
+import com.jakewharton.rxrelay2.PublishRelay
 import com.kreactive.technicaltest.api.OMDbService
 import com.kreactive.technicaltest.api.NetworkStatus
 import com.kreactive.technicaltest.factory.MovieDataSourceFactory
@@ -12,8 +14,11 @@ import rx.schedulers.Schedulers
 import rx.android.schedulers.AndroidSchedulers
 
 class MovieRepository(private val service: OMDbService) {
+
     val pagedListConfig: PagedList.Config
     lateinit var sourceFactory : MovieDataSourceFactory
+
+    lateinit var listing : Listing<Movie>
 
     init {
         pagedListConfig = PagedList.Config.Builder()
@@ -24,13 +29,14 @@ class MovieRepository(private val service: OMDbService) {
                 .build()
     }
 
-    fun search(data : SearchDatas): Listing<Movie> {
+    fun search(data : SearchDatas) : Listing<Movie>?{
         sourceFactory = MovieDataSourceFactory(service, data.search, data.type, data.year)
 
         val pagedList = RxPagedListBuilder(sourceFactory, pagedListConfig).buildObservable()
+        //val networkStatus : BehaviorRelay<NetworkStatus> = BehaviorRelay.createDefault(NetworkStatus.Idle)
+        //TODO debug network status
         val networkStatus = sourceFactory.sourceLiveData.flatMap { it.networkStatus }
-
-        return Listing<Movie>(
+        listing = Listing<Movie>(
                 pagedList,
                 networkStatus,
                 refresh = {
@@ -41,6 +47,7 @@ class MovieRepository(private val service: OMDbService) {
                 }
 
         )
+        return listing
     }
 
     fun reload(){

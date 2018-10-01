@@ -17,7 +17,7 @@ class MovieDataSource(private val service: OMDbService,
                       val type: Type?,
                       val year: String?) : PageKeyedDataSource<Int, Movie>() {
 
-    val networkStatus: BehaviorRelay<NetworkStatus> = BehaviorRelay.createDefault(NetworkStatus.Idle)
+    val networkStatus: BehaviorRelay<NetworkStatus> = BehaviorRelay.createDefault(NetworkStatus.InProgress)
 
     val initPage = 1
 
@@ -39,10 +39,10 @@ class MovieDataSource(private val service: OMDbService,
                 .share()
                 .subscribe(
                         {
-                            networkStatus.accept(it)
+                            //networkStatus.accept(it)
                         },
                         {
-                            networkStatus.accept(NetworkStatus.Error(it))
+                            //networkStatus.accept(NetworkStatus.Error(it))
                         }
 
                 )
@@ -54,7 +54,7 @@ class MovieDataSource(private val service: OMDbService,
                 page
         ) {
             callback.onResult(it, page + 1)
-        }
+        }.subscribe()
     }
 
     override fun loadBefore(params: LoadParams<Int>, callback: LoadCallback<Int, Movie>) {
