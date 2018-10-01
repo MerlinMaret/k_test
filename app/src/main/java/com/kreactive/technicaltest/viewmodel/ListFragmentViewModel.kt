@@ -16,9 +16,9 @@ import io.reactivex.Observable
 
 class ListFragmentViewModel(private val movieRepository: MovieRepository, private val errorManager: ErrorManager) : BaseViewModel() {
 
-    private val searchTextRelay: BehaviorRelay<String> = BehaviorRelay.createDefault("")
-    private val searchTypeRelay: BehaviorRelay<Type?> = BehaviorRelay.createDefault(Type.movie)
-    private val searchYearRelay: BehaviorRelay<String?> = BehaviorRelay.createDefault("")
+    private val searchTextRelay: BehaviorRelay<String> = BehaviorRelay.create()
+    private val searchTypeRelay: BehaviorRelay<Type?> = BehaviorRelay.create()
+    private val searchYearRelay: BehaviorRelay<String?> = BehaviorRelay.create()
     val movies: Observable<PagedList<Movie>>
     val searchingStatus: Observable<NetworkStatus>
 
@@ -57,7 +57,7 @@ class ListFragmentViewModel(private val movieRepository: MovieRepository, privat
     //endregion
 
     fun reload() {
-        //movieRepository.reload()
+        movieRepository.reload()
     }
 
     fun setSearchText(searchText: String) {

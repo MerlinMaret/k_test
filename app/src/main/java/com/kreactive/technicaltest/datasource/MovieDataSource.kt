@@ -7,10 +7,9 @@ import com.kreactive.technicaltest.api.OMDbService
 import com.kreactive.technicaltest.api.result.SearchResult
 import com.kreactive.technicaltest.model.Movie
 import com.kreactive.technicaltest.model.Type
-import com.kreactive.technicaltest.repository.MovieRepository
-import rx.Observable
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 
 class MovieDataSource(private val service: OMDbService,
                       val search: String,

@@ -87,6 +87,7 @@ class BottomSheetFilterFragment : BottomSheetDialogFragment(), KodeinAware {
 
         dialog_bottom_filter_b_remove_year.setOnClickListener {
             dialog_bottom_filter_s_year.setSelection(0)
+            callback?.onYearChanged("")
         }
     }
 

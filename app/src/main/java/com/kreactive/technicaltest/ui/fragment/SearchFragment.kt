@@ -17,7 +17,7 @@ import kotlinx.android.synthetic.main.fragment_search.*
 import org.kodein.di.generic.instance
 
 class SearchFragment : BaseFragment(){
-/*
+
     private val viewModel: SearchFragmentViewModel by instance(arg = this)
 
     //region init
@@ -37,7 +37,7 @@ class SearchFragment : BaseFragment(){
 
     private fun setAction(){
         fragment_search_button.setOnClickListener {
-            viewModel.search(fragment_search_et.text.toString())
+            viewModel.searchTextRelay.accept(fragment_search_et.text.toString())
         }
     }
 
@@ -68,5 +68,5 @@ class SearchFragment : BaseFragment(){
                 fragment_search_errors.visibility = GONE
             }
         }
-    }*/
+    }
 }

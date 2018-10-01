@@ -2,28 +2,26 @@ package com.kreactive.technicaltest.repository
 
 import androidx.paging.PagedList
 import androidx.paging.RxPagedListBuilder
-import com.jakewharton.rxrelay2.PublishRelay
+import com.jakewharton.rxrelay2.BehaviorRelay
 import com.kreactive.technicaltest.api.OMDbService
 import com.kreactive.technicaltest.api.NetworkStatus
 import com.kreactive.technicaltest.factory.MovieDataSourceFactory
 import com.kreactive.technicaltest.model.Movie
 import com.kreactive.technicaltest.model.Type
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
-import io.reactivex.subjects.BehaviorSubject
-import rx.Observable
-import rx.schedulers.Schedulers
-import rx.android.schedulers.AndroidSchedulers
-import timber.log.Timber
+import io.reactivex.schedulers.Schedulers
 
 class MovieRepository(private val service: OMDbService) {
 
     val pagedListConfig: PagedList.Config
     private lateinit var sourceFactory : MovieDataSourceFactory
 
-    val pagedListObservable : PublishRelay<PagedList<Movie>> = PublishRelay.create()
+    val pagedListObservable : BehaviorRelay<PagedList<Movie>> = BehaviorRelay.create()
     private var pagedListDisposable : Disposable? = null
 
-    val pagedListNetworkStatusObservable : PublishRelay<NetworkStatus> = PublishRelay.create()
+    val pagedListNetworkStatusObservable : BehaviorRelay<NetworkStatus> = BehaviorRelay.create()
     private var pagedListNetworkStatusDisposable : Disposable? = null
 
     init {
@@ -33,6 +31,10 @@ class MovieRepository(private val service: OMDbService) {
                 .setPageSize(20)
                 .setPrefetchDistance(10)
                 .build()
+    }
+
+    fun reload(){
+        sourceFactory.sourceLiveData.value.invalidate()
     }
 
     fun search(data : SearchDatas){

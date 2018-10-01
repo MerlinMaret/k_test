@@ -59,4 +59,8 @@ data class Movie(
         isEquals = if (other is Movie) { imdbID.equals(other.imdbID) } else { false }
         return isEquals
     }
+
+    fun needLoadDatas(): Boolean {
+        return runtime == null
+    }
 }
