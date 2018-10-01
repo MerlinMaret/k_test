@@ -72,5 +72,6 @@ dependencies {
 
     // Timber
     implementation 'com.jakewharton.timber:timber:4.7.1'
+    implementation 'android.arch.navigation:navigation-fragment:1.0.0-alpha06'
 
 }

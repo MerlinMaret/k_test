@@ -12,6 +12,7 @@ class MovieDataSourceFactory(private val service : OMDbService,
                              val search : String,
                              val type : Type?,
                              val year : String?) : DataSource.Factory<Int, Movie>() {
+
     val sourceLiveData : BehaviorRelay<MovieDataSource> = BehaviorRelay.create()
 
     override fun create(): DataSource<Int, Movie> {

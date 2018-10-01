@@ -1,6 +1,7 @@
 package com.kreactive.technicaltest.ui.fragment
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.widget.SearchView
 import android.view.*
 import com.kreactive.technicaltest.R
@@ -20,7 +21,7 @@ import com.kreactive.technicaltest.api.NetworkStatus
 import com.kreactive.technicaltest.model.Type
 import com.kreactive.technicaltest.ui.activity.MainActivity
 import com.kreactive.technicaltest.ui.dialog.BottomSheetFilterFragment
-
+import timber.log.Timber
 
 class ListFragment : BaseFragment(), BottomSheetFilterFragment.Callback, MovieAdapter.Callback {
 
@@ -68,12 +69,12 @@ class ListFragment : BaseFragment(), BottomSheetFilterFragment.Callback, MovieAd
         val searchView = (menu?.findItem(R.id.menu_search)?.actionView as SearchView)
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(text: String?): Boolean {
-                return false
+                viewModel.setSearchText(text ?: "")
+                return true
             }
 
             override fun onQueryTextChange(text: String?): Boolean {
-                viewModel.search(text)
-                return true
+                return false
             }
         }
         )
@@ -92,6 +93,7 @@ class ListFragment : BaseFragment(), BottomSheetFilterFragment.Callback, MovieAd
                 }
         )
 
+
         ViewBinderManager.subscribeValue(
                 lifecycle(RxLifecycleDelegate.FragmentEvent.DESTROY),
                 viewModel.searchingStatus,
@@ -103,14 +105,16 @@ class ListFragment : BaseFragment(), BottomSheetFilterFragment.Callback, MovieAd
 
     private fun onMoviesChanged(list: PagedList<Movie>) {
         movieAdapter.submitList(list)
-        fragment_list_tv_error?.visibility = GONE
-        fragment_list_recyclerview?.visibility = VISIBLE
     }
 
     private fun onSearchStatusChanged(networkStatus: NetworkStatus) {
         when (networkStatus) {
             is NetworkStatus.InProgress -> fragment_list_swiperefresh?.isRefreshing = true
-            is NetworkStatus.Success -> fragment_list_swiperefresh?.isRefreshing = false
+            is NetworkStatus.Success -> {
+                fragment_list_swiperefresh?.isRefreshing = false
+                fragment_list_recyclerview?.visibility = VISIBLE
+                fragment_list_tv_error?.visibility = GONE
+            }
             is NetworkStatus.Error<*> -> {
                 fragment_list_swiperefresh?.isRefreshing = false
                 fragment_list_tv_error?.visibility = VISIBLE
@@ -143,11 +147,11 @@ class ListFragment : BaseFragment(), BottomSheetFilterFragment.Callback, MovieAd
     //region Button Sheet Callback
 
     override fun onTypeCheckChanged(type: Type?) {
-        viewModel.search(type = type)
+        type?.let { viewModel.setSearchType(it) }
     }
 
     override fun onYearChanged(year: String?) {
-        viewModel.search(year = year)
+        year?.let { viewModel.setSearchYear(it) }
     }
 
     //endregion

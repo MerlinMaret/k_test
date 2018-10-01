@@ -61,7 +61,7 @@ class DetailFragment : BaseFragment() {
     private fun subscribeViewModel() {
         ViewBinderManager.subscribeValue(
                 lifecycle(RxLifecycleDelegate.FragmentEvent.DESTROY),
-                viewModel.movie,
+                viewModel.movieObservable,
                 {
                     onMovieChanged(it)
                 }

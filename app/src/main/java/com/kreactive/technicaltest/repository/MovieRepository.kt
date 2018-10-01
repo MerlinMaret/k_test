@@ -2,23 +2,29 @@ package com.kreactive.technicaltest.repository
 
 import androidx.paging.PagedList
 import androidx.paging.RxPagedListBuilder
-import com.jakewharton.rxrelay2.BehaviorRelay
 import com.jakewharton.rxrelay2.PublishRelay
 import com.kreactive.technicaltest.api.OMDbService
 import com.kreactive.technicaltest.api.NetworkStatus
 import com.kreactive.technicaltest.factory.MovieDataSourceFactory
 import com.kreactive.technicaltest.model.Movie
 import com.kreactive.technicaltest.model.Type
+import io.reactivex.disposables.Disposable
+import io.reactivex.subjects.BehaviorSubject
 import rx.Observable
 import rx.schedulers.Schedulers
 import rx.android.schedulers.AndroidSchedulers
+import timber.log.Timber
 
 class MovieRepository(private val service: OMDbService) {
 
     val pagedListConfig: PagedList.Config
-    lateinit var sourceFactory : MovieDataSourceFactory
+    private lateinit var sourceFactory : MovieDataSourceFactory
 
-    lateinit var listing : Listing<Movie>
+    val pagedListObservable : PublishRelay<PagedList<Movie>> = PublishRelay.create()
+    private var pagedListDisposable : Disposable? = null
+
+    val pagedListNetworkStatusObservable : PublishRelay<NetworkStatus> = PublishRelay.create()
+    private var pagedListNetworkStatusDisposable : Disposable? = null
 
     init {
         pagedListConfig = PagedList.Config.Builder()
@@ -29,29 +35,16 @@ class MovieRepository(private val service: OMDbService) {
                 .build()
     }
 
-    fun search(data : SearchDatas) : Listing<Movie>?{
+    fun search(data : SearchDatas){
+        pagedListDisposable?.dispose()
+        pagedListNetworkStatusDisposable?.dispose()
         sourceFactory = MovieDataSourceFactory(service, data.search, data.type, data.year)
 
         val pagedList = RxPagedListBuilder(sourceFactory, pagedListConfig).buildObservable()
-        //val networkStatus : BehaviorRelay<NetworkStatus> = BehaviorRelay.createDefault(NetworkStatus.Idle)
-        //TODO debug network status
-        val networkStatus = sourceFactory.sourceLiveData.flatMap { it.networkStatus }
-        listing = Listing<Movie>(
-                pagedList,
-                networkStatus,
-                refresh = {
-                    sourceFactory.sourceLiveData.value?.invalidate()
-                },
-                retry = {
-                    //Nothing
-                }
+        val networkStatus = sourceFactory.sourceLiveData.flatMap { movieDataSource -> movieDataSource.networkStatus }
 
-        )
-        return listing
-    }
-
-    fun reload(){
-        sourceFactory.sourceLiveData.value?.invalidate()
+        pagedListDisposable = pagedList.subscribe(pagedListObservable)
+        pagedListNetworkStatusDisposable = networkStatus.subscribe(pagedListNetworkStatusObservable)
     }
 
     fun getMovie(movie: Movie): Observable<NetworkStatus> {

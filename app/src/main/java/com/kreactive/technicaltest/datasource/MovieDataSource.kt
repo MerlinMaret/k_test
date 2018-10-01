@@ -39,10 +39,10 @@ class MovieDataSource(private val service: OMDbService,
                 .share()
                 .subscribe(
                         {
-                            //networkStatus.accept(it)
+                            networkStatus.accept(it)
                         },
                         {
-                            //networkStatus.accept(NetworkStatus.Error(it))
+                            networkStatus.accept(NetworkStatus.Error(it))
                         }
 
                 )

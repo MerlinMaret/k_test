@@ -2,6 +2,7 @@ package com.kreactive.technicaltest.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.jakewharton.rxrelay2.PublishRelay
 import com.kreactive.technicaltest.manager.ErrorManager
 import com.kreactive.technicaltest.model.Movie
 import com.kreactive.technicaltest.repository.MovieRepository
@@ -13,27 +14,22 @@ import timber.log.Timber
 class DetailFragmentViewModel(private val movieRepository: MovieRepository, private val errorManager: ErrorManager) : BaseViewModel() {
 
     var movieId: String? = null
-    val movie: Observable<Movie?> = movieRepository.listing.pagedList.map { pagedList ->
-        if(pagedList.size > 0){
-            pagedList[0]
-        }
-        else {
-            null
-        }
-    }
+    var movieObservable: PublishRelay<Movie?> = PublishRelay.create()
+
 
     fun loadDatas(movieId: String?) {
         this.movieId = movieId
-
-        movie.subscribe {
-            if (it?.rated == null) {
-                getDetails(it)
+        movieRepository.pagedListObservable.map { pagedList ->
+            pagedList.find {
+                it.imdbID == movieId
             }
-        }.disposedBy(disposeBag)
+        }
+                .subscribe(movieObservable)
+                .disposedBy(disposeBag)
     }
 
     private fun getDetails(movie: Movie?) {
-        movie?.let{
+        movie?.let {
             movieRepository
                     .getMovie(movie)
                     .subscribe {

@@ -2,90 +2,89 @@ package com.kreactive.technicaltest.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import android.text.TextUtils
+import android.util.Log
 import androidx.paging.PagedList
 import com.jakewharton.rxrelay2.BehaviorRelay
-import com.jakewharton.rxrelay2.PublishRelay
 import com.kreactive.technicaltest.api.NetworkStatus
 import com.kreactive.technicaltest.manager.ErrorManager
 import com.kreactive.technicaltest.model.Movie
 import com.kreactive.technicaltest.model.Type
-import com.kreactive.technicaltest.repository.Listing
 import com.kreactive.technicaltest.repository.MovieRepository
 import com.kreactive.technicaltest.utils.disposedBy
 import com.kreactive.technicaltest.viewmodel.base.BaseViewModel
 import io.reactivex.Observable
-import io.reactivex.disposables.Disposable
-import io.reactivex.subjects.BehaviorSubject
 
 class ListFragmentViewModel(private val movieRepository: MovieRepository, private val errorManager: ErrorManager) : BaseViewModel() {
 
-    private val searchText: PublishRelay<String> = PublishRelay.create()
-    private val searchType: PublishRelay<Type?> = PublishRelay.create()
-    private val searchYear: PublishRelay<String?> = PublishRelay.create()
+    private val searchTextRelay: BehaviorRelay<String> = BehaviorRelay.createDefault("")
+    private val searchTypeRelay: BehaviorRelay<Type?> = BehaviorRelay.createDefault(Type.movie)
+    private val searchYearRelay: BehaviorRelay<String?> = BehaviorRelay.createDefault("")
     val movies: Observable<PagedList<Movie>>
     val searchingStatus: Observable<NetworkStatus>
-    private var searchDisposable : Disposable
-
 
     //region Init
 
     init {
-        val searchObservable = initSearch()
-        movies = initMovies(searchObservable)
-        searchingStatus = initSearchingStatus(searchObservable)
-        searchDisposable = searchObservable.subscribe()
-        searchDisposable.disposedBy(disposeBag)
+        initSearch()
+        movies = initMovies()
+        searchingStatus = initSearchingStatus()
     }
 
-    private fun initSearch() : Observable<Listing<Movie>>{
-        return Observable.combineLatest(
-                arrayOf(searchText,
-                        searchType,
-                        searchYear)
+    private fun initSearch() {
+        Observable.combineLatest(
+                arrayOf(searchTextRelay.share(),
+                        searchTypeRelay.share(),
+                        searchYearRelay.share())
         ) { list ->
-            val text = list[0] as String
-            val type = list[1] as Type?
-            val year = list[2] as String?
-            val searchData = MovieRepository.SearchDatas(text, type, year)
+            val searchText = list[0] as String
+            val searchType = list[1] as Type?
+            val searchYear = list[2] as String?
+            val searchData = MovieRepository.SearchDatas(searchText, searchType, searchYear)
             movieRepository.search(searchData)
         }
+                .subscribe()
+                .disposedBy(disposeBag)
     }
 
-    private fun initMovies(searchObservable : Observable<Listing<Movie>>): Observable<PagedList<Movie>> {
-        return searchObservable.flatMap {
-            it.pagedList
-        }
+    private fun initMovies(): Observable<PagedList<Movie>> {
+        return movieRepository.pagedListObservable
     }
 
-    private fun initSearchingStatus(searchObservable : Observable<Listing<Movie>>): Observable<NetworkStatus> {
-        return searchObservable.flatMap {
-            it.networkState
-        }
+    private fun initSearchingStatus(): Observable<NetworkStatus> {
+        return movieRepository.pagedListNetworkStatusObservable
     }
 
     //endregion
 
     fun reload() {
-        movieRepository.reload()
+        //movieRepository.reload()
     }
 
-    fun search(
-            text: String? = this.searchText.value,
-            type: Type? = this.searchType.value,
-            year: String? = this.searchYear.value,
-            needReload: Boolean = false
-    ) {
-        val isSameText = this.searchText.value == text
-        val isSameType = this.searchType.value == type
-        val isSameYear = this.searchYear.value == year
-        val isTextEmpty = TextUtils.isEmpty(text)
+    fun setSearchText(searchText: String) {
+        try {
+            val lastText = this.searchTextRelay.value
+            val isSameText = lastText == searchText
+            if (!isSameText) {
+                this.searchTextRelay.accept(searchText)
+            }
+        } catch (e: Throwable) {
+            Log.e("text search", e.toString())
+        }
+    }
 
-        val needWSCall = (!(isSameText && isSameType && isSameYear)) || needReload
-        if (!isTextEmpty && needWSCall) {
-            if(!isSameText) { this.searchText.accept(text) }
-            if(!isSameType) { this.searchType.accept(type) }
-            if(!isSameYear) { this.searchYear.accept(year) }
+    fun setSearchType(type: Type) {
+        val lastType = getType()
+        val isSameType = lastType == type
+        if (!isSameType) {
+            this.searchTypeRelay.accept(type)
+        }
+    }
+
+    fun setSearchYear(year: String) {
+        val lastYear = getYear()
+        val isSameYear = lastYear == year
+        if (!isSameYear) {
+            this.searchYearRelay.accept(year)
         }
     }
 
@@ -94,11 +93,11 @@ class ListFragmentViewModel(private val movieRepository: MovieRepository, privat
     }
 
     fun getType(): Type? {
-        return this.searchType.value
+        return this.searchTypeRelay.value
     }
 
     fun getYear(): String? {
-        return this.searchYear.value
+        return this.searchYearRelay.value
     }
 
     class Factory(private val movieRepository: MovieRepository, private val errorManager: ErrorManager) : ViewModelProvider.Factory {
