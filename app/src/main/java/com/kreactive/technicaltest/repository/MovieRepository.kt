@@ -15,6 +15,11 @@ import io.reactivex.schedulers.Schedulers
 
 class MovieRepository(private val service: OMDbService) {
 
+
+    val searchTextRelay: BehaviorRelay<String> = BehaviorRelay.create()
+    val searchTypeRelay: BehaviorRelay<Type?> = BehaviorRelay.createDefault(Type.movie)
+    val searchYearRelay: BehaviorRelay<String?> = BehaviorRelay.createDefault("")
+
     val pagedListConfig: PagedList.Config
     private lateinit var sourceFactory : MovieDataSourceFactory
 

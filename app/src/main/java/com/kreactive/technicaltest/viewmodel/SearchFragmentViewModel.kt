@@ -18,7 +18,7 @@ import timber.log.Timber
 
 class SearchFragmentViewModel(private val movieRepository: MovieRepository, private val errorManager: ErrorManager) : BaseViewModel() {
 
-    val searchTextRelay: BehaviorRelay<String> = BehaviorRelay.create()
+    val searchTextRelay: BehaviorRelay<String> = movieRepository.searchTextRelay
     val movies: Observable<PagedList<Movie>>
     val searchingStatus: Observable<NetworkStatus>
 
