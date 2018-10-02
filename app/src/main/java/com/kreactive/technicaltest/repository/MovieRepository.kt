@@ -17,17 +17,13 @@ class MovieRepository(private val service: OMDbService) {
 
 
     val searchTextRelay: BehaviorRelay<String> = BehaviorRelay.create()
-    val searchTypeRelay: BehaviorRelay<Type?> = BehaviorRelay.createDefault(Type.movie)
-    val searchYearRelay: BehaviorRelay<String?> = BehaviorRelay.createDefault("")
+    val searchTypeRelay: BehaviorRelay<Type> = BehaviorRelay.createDefault(Type.movie)
+    val searchYearRelay: BehaviorRelay<String> = BehaviorRelay.createDefault("")
 
     val pagedListConfig: PagedList.Config
-    private lateinit var sourceFactory : MovieDataSourceFactory
+    private lateinit var sourceFactory: MovieDataSourceFactory
 
-    val pagedListObservable : BehaviorRelay<PagedList<Movie>> = BehaviorRelay.create()
-    private var pagedListDisposable : Disposable? = null
-
-    val pagedListNetworkStatusObservable : BehaviorRelay<NetworkStatus> = BehaviorRelay.create()
-    private var pagedListNetworkStatusDisposable : Disposable? = null
+    val listingObservable: BehaviorRelay<Listing<Movie>> = BehaviorRelay.create()
 
     init {
         pagedListConfig = PagedList.Config.Builder()
@@ -38,20 +34,31 @@ class MovieRepository(private val service: OMDbService) {
                 .build()
     }
 
-    fun reload(){
+    fun reload() {
         sourceFactory.sourceLiveData.value.invalidate()
     }
 
-    fun search(data : SearchDatas){
-        pagedListDisposable?.dispose()
-        pagedListNetworkStatusDisposable?.dispose()
+    fun search(data: SearchDatas) {
         sourceFactory = MovieDataSourceFactory(service, data.search, data.type, data.year)
 
         val pagedList = RxPagedListBuilder(sourceFactory, pagedListConfig).buildObservable()
         val networkStatus = sourceFactory.sourceLiveData.flatMap { movieDataSource -> movieDataSource.networkStatus }
 
-        pagedListDisposable = pagedList.subscribe(pagedListObservable)
-        pagedListNetworkStatusDisposable = networkStatus.subscribe(pagedListNetworkStatusObservable)
+        val pagedListObservable : BehaviorRelay<PagedList<Movie>> = BehaviorRelay.create()
+        pagedList.subscribe(pagedListObservable)
+
+        listingObservable.accept(
+                Listing(
+                        pagedListObservable,
+                        networkStatus,
+                        {
+                            //Nothing
+                        },
+                        {
+                            //Nothing
+                        }
+                )
+        )
     }
 
     fun getMovie(movie: Movie): Observable<NetworkStatus> {

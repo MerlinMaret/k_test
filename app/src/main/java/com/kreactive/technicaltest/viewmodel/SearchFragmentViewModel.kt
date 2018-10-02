@@ -34,18 +34,18 @@ class SearchFragmentViewModel(private val movieRepository: MovieRepository, priv
         searchTextRelay.flatMap { text ->
             val searchData = MovieRepository.SearchDatas(text, null, null)
             movieRepository.search(searchData)
-            movieRepository.pagedListObservable
+            movieRepository.listingObservable.flatMap { listing -> listing.pagedList }
         }
                 .subscribe()
                 .disposedBy(disposeBag)
     }
 
     private fun initMovies(): Observable<PagedList<Movie>> {
-        return movieRepository.pagedListObservable
+        return movieRepository.listingObservable.flatMap { listing -> listing.pagedList }
     }
 
     private fun initSearchingStatus(): Observable<NetworkStatus> {
-        return movieRepository.pagedListNetworkStatusObservable
+        return movieRepository.listingObservable.flatMap { listing -> listing.networkState }
     }
 
     //endregion

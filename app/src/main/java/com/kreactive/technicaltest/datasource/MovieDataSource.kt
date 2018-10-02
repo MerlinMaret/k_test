@@ -1,5 +1,6 @@
 package com.kreactive.technicaltest.datasource
 
+import android.annotation.SuppressLint
 import androidx.paging.PageKeyedDataSource
 import com.jakewharton.rxrelay2.BehaviorRelay
 import com.kreactive.technicaltest.api.NetworkStatus
@@ -20,6 +21,7 @@ class MovieDataSource(private val service: OMDbService,
 
     val initPage = 1
 
+    @SuppressLint("CheckResult")
     override fun loadInitial(params: LoadInitialParams<Int>, callback: LoadInitialCallback<Int, Movie>) {
         search(
                 initPage,

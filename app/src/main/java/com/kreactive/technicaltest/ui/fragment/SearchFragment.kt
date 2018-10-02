@@ -8,6 +8,7 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.appcompat.widget.SearchView
 import com.kreactive.technicaltest.R
 import com.kreactive.technicaltest.api.NetworkStatus
 import com.kreactive.technicaltest.manager.ViewBinderManager
@@ -38,15 +39,20 @@ class SearchFragment : BaseFragment() {
 
     private fun setAction() {
         fragment_search_button.setOnClickListener {
-            viewModel.searchTextRelay.accept(fragment_search_et.text.toString())
+            viewModel.searchTextRelay.accept(fragment_search_et.query.toString())
         }
 
-        fragment_search_et.setOnEditorActionListener(object : TextView.OnEditorActionListener {
-            override fun onEditorAction(p0: TextView?, p1: Int, p2: KeyEvent?): Boolean {
-                viewModel.searchTextRelay.accept(fragment_search_et.text.toString())
+        fragment_search_et?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(text: String?): Boolean {
+                viewModel.searchTextRelay.accept(fragment_search_et.query.toString())
                 return true
             }
-        })
+
+            override fun onQueryTextChange(text: String?): Boolean {
+                return false
+            }
+        }
+        )
     }
 
     private fun subscribeViewModel() {

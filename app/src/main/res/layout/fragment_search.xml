@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <EditText
+    <androidx.appcompat.widget.SearchView
         android:id="@+id/fragment_search_et"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -19,7 +19,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:inputType="text"/>
+        android:inputType="text"
+        app:iconifiedByDefault="false"
+        />
 
     <TextView
         android:id="@+id/fragment_search_errors"

@@ -17,7 +17,7 @@ class DetailFragmentViewModel(private val movieRepository: MovieRepository, priv
 
     fun loadDatas(movieId: String?) {
         this.movieId = movieId
-        movieRepository.pagedListObservable.map { pagedList ->
+        movieRepository.listingObservable.flatMap { listing -> listing.pagedList }.map { pagedList ->
             pagedList.find {
                 it.imdbID == movieId
             }

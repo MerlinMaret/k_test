@@ -16,6 +16,7 @@ import org.kodein.di.generic.instance
 import android.view.MenuInflater
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import androidx.core.view.MenuItemCompat
 import androidx.paging.PagedList
 import com.kreactive.technicaltest.api.NetworkStatus
 import com.kreactive.technicaltest.model.Type
@@ -66,10 +67,12 @@ class ListFragment : BaseFragment(), BottomSheetFilterFragment.Callback, MovieAd
 
     private fun initSearchView(menu: Menu?) {
 
-        val searchView = (menu?.findItem(R.id.menu_search)?.actionView as SearchView)
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        val menuItem = menu?.findItem(R.id.menu_search)
+        val searchView = (menuItem?.actionView as? SearchView)
+        searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(text: String?): Boolean {
                 viewModel.setSearchText(text ?: "")
+                menuItem.collapseActionView()
                 return true
             }
 
@@ -93,6 +96,13 @@ class ListFragment : BaseFragment(), BottomSheetFilterFragment.Callback, MovieAd
                 }
         )
 
+        ViewBinderManager.subscribeValue(
+                lifecycle(RxLifecycleDelegate.FragmentEvent.DESTROY),
+                viewModel.searchTextRelay,
+                {
+                    (activity as? MainActivity)?.supportActionBar?.title = it
+                }
+        )
 
         ViewBinderManager.subscribeValue(
                 lifecycle(RxLifecycleDelegate.FragmentEvent.DESTROY),

@@ -3,6 +3,7 @@ package com.kreactive.technicaltest.model
 import android.media.Rating
 import com.google.gson.annotations.SerializedName
 
+@Ent
 data class Movie(
         @SerializedName("Title")
         var title: String,
