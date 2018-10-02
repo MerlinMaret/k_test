@@ -2,10 +2,11 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <EditText
+    <androidx.appcompat.widget.SearchView
         android:id="@+id/fragment_search_et"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -13,19 +14,23 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
+        android:imeOptions="actionSearch"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:inputType="text"
+        app:iconifiedByDefault="false"
+        />
 
     <TextView
         android:id="@+id/fragment_search_errors"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/fragment_search_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@+id/fragment_search_et" />
 
     <ProgressBar

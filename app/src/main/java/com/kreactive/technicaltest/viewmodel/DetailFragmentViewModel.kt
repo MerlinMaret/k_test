@@ -2,35 +2,42 @@ package com.kreactive.technicaltest.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.jakewharton.rxrelay2.BehaviorRelay
 import com.kreactive.technicaltest.manager.ErrorManager
 import com.kreactive.technicaltest.model.Movie
 import com.kreactive.technicaltest.repository.MovieRepository
 import com.kreactive.technicaltest.utils.disposedBy
 import com.kreactive.technicaltest.viewmodel.base.BaseViewModel
-import io.reactivex.Observable
-import timber.log.Timber
 
 class DetailFragmentViewModel(private val movieRepository: MovieRepository, private val errorManager: ErrorManager) : BaseViewModel() {
 
     var movieId: String? = null
-    val movie: Observable<Movie> = movieRepository.movies.map { it.find { it.imdbID == movieId } }
+    var movieObservable: BehaviorRelay<Movie?> = BehaviorRelay.create()
+
 
     fun loadDatas(movieId: String?) {
         this.movieId = movieId
-
-        movie.subscribe {
-            if (it.rated == null) {
-                getDetails(it)
+        movieRepository.listingObservable.flatMap { listing -> listing.pagedList }.map { pagedList ->
+            pagedList.find {
+                it.imdbID == movieId
             }
-        }.disposedBy(disposeBag)
+        }
+                .subscribe { movie ->
+                    movieObservable.accept(movie)
+                    if (movie?.needLoadDatas() ?: false) {
+                        movie?.let { getDetails(it) }
+                    }
+                }
+                .disposedBy(disposeBag)
+
     }
 
     private fun getDetails(movie: Movie) {
         movieRepository
                 .getMovie(movie)
-                .subscribe {
-                    Timber.i(movie.toString())
-                }
+                .subscribe { movieObservable.accept(movieObservable.value) }
+                .disposedBy(disposeBag)
+
     }
 
     class Factory(private val movieRepository: MovieRepository, private val errorManager: ErrorManager) : ViewModelProvider.Factory {

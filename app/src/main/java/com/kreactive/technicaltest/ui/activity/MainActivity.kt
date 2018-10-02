@@ -9,6 +9,7 @@ import com.kreactive.technicaltest.R
 import android.view.View
 import com.kreactive.technicaltest.manager.TransitionManager
 import com.kreactive.technicaltest.ui.activity.base.BaseActivity
+import com.kreactive.technicaltest.ui.fragment.DetailFragment
 import com.kreactive.technicaltest.ui.fragment.ListFragment
 import com.kreactive.technicaltest.ui.fragment.SearchFragment
 import kotlinx.android.synthetic.main.activity_main.*
@@ -25,10 +26,6 @@ class MainActivity : BaseActivity() {
         if(savedInstanceState == null){
             setFragment(SearchFragment())
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
     }
 
     fun setFragment(

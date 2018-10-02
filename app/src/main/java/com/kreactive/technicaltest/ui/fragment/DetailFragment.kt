@@ -61,17 +61,19 @@ class DetailFragment : BaseFragment() {
     private fun subscribeViewModel() {
         ViewBinderManager.subscribeValue(
                 lifecycle(RxLifecycleDelegate.FragmentEvent.DESTROY),
-                viewModel.movie,
+                viewModel.movieObservable,
                 {
                     onMovieChanged(it)
                 }
         )
     }
 
-    private fun onMovieChanged(movie: Movie) {
+    private fun onMovieChanged(movie: Movie?) {
         Timber.i(movie.toString())
-        (activity as? MainActivity)?.supportActionBar?.title = movie.title
-        showDatas(movie)
+        (activity as? MainActivity)?.supportActionBar?.title = movie?.title
+        movie?.let {
+            showDatas(movie)
+        }
     }
 
     private fun showDatas(movie: Movie) {

@@ -2,9 +2,9 @@ package com.kreactive.technicaltest.api
 
 import com.kreactive.technicaltest.api.result.DetailResult
 import com.kreactive.technicaltest.api.result.SearchResult
+import io.reactivex.Observable
 import retrofit2.http.GET
 import retrofit2.http.Query
-import rx.Observable
 
 const val myApiKey = "4e870274"
 interface OMDbService {

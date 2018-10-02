@@ -3,6 +3,7 @@ package com.kreactive.technicaltest.model
 import android.media.Rating
 import com.google.gson.annotations.SerializedName
 
+@Ent
 data class Movie(
         @SerializedName("Title")
         var title: String,
@@ -55,8 +56,12 @@ data class Movie(
 ) {
 
     override fun equals(other: Any?): Boolean {
-        var isEquals: Boolean
+        val isEquals: Boolean
         isEquals = if (other is Movie) { imdbID.equals(other.imdbID) } else { false }
         return isEquals
+    }
+
+    fun needLoadDatas(): Boolean {
+        return runtime == null
     }
 }
